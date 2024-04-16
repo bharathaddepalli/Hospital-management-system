@@ -1,0 +1,301 @@
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+import sqlite3
+
+# Create a function to initialize the database
+def initialize_database():
+    conn = sqlite3.connect("hospital.db")
+    c = conn.cursor()
+
+    # Create table for patients
+    c.execute('''CREATE TABLE IF NOT EXISTS patients (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    age INTEGER NOT NULL,
+                    email TEXT NOT NULL,
+                    mobile TEXT NOT NULL,
+                    blood_group TEXT NOT NULL,
+                    address TEXT NOT NULL,
+                    password TEXT NOT NULL
+                )''')
+
+    # Create table for doctors
+    c.execute('''CREATE TABLE IF NOT EXISTS doctors (
+                    id INTEGER PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    age INTEGER NOT NULL,
+                    email TEXT NOT NULL,
+                    mobile TEXT NOT NULL,
+                    specialization TEXT NOT NULL,
+                    address TEXT NOT NULL,
+                    password TEXT NOT NULL
+                )''')
+
+    conn.commit()
+    conn.close()
+
+def patient_signin_dialog():
+    # Function to create and display the patient sign-in dialog box
+    patient_dialog = tk.Toplevel(root)
+    patient_dialog.title("Patient Sign In")
+    patient_dialog.geometry("300x150")
+    
+    # Label and Entry for username
+    tk.Label(patient_dialog, text="Username:").grid(row=0, column=0, padx=5, pady=5)
+    username_entry = tk.Entry(patient_dialog)
+    username_entry.grid(row=0, column=1, padx=5, pady=5)
+    
+    # Label and Entry for password
+    tk.Label(patient_dialog, text="Password:").grid(row=1, column=0, padx=5, pady=5)
+    password_entry = tk.Entry(patient_dialog, show="*")
+    password_entry.grid(row=1, column=1, padx=5, pady=5)
+    
+    # Function to handle sign-in button click
+    def patient_signin():
+        username = username_entry.get()
+        password = password_entry.get()
+        # Check if username and password exist in database
+        conn = sqlite3.connect("hospital.db")
+        c = conn.cursor()
+        c.execute("SELECT * FROM patients WHERE name=? AND password=?", (username, password))
+        result = c.fetchone()
+        conn.close()
+        if result:
+            messagebox.showinfo("Patient Sign In", "Sign in successful!")
+        else:
+            messagebox.showerror("Error", "Invalid username or password!")
+        patient_dialog.destroy()
+    
+    # Sign-in button
+    signin_button = tk.Button(patient_dialog, text="Sign In", command=patient_signin)
+    signin_button.grid(row=2, columnspan=2, padx=5, pady=10)
+
+def doctor_signin_dialog():
+    # Function to create and display the doctor sign-in dialog box
+    doctor_dialog = tk.Toplevel(root)
+    doctor_dialog.title("Doctor Sign In")
+    doctor_dialog.geometry("300x150")
+    
+    # Label and Entry for username
+    tk.Label(doctor_dialog, text="Username:").grid(row=0, column=0, padx=5, pady=5)
+    username_entry = tk.Entry(doctor_dialog)
+    username_entry.grid(row=0, column=1, padx=5, pady=5)
+    
+    # Label and Entry for password
+    tk.Label(doctor_dialog, text="Password:").grid(row=1, column=0, padx=5, pady=5)
+    password_entry = tk.Entry(doctor_dialog, show="*")
+    password_entry.grid(row=1, column=1, padx=5, pady=5)
+    
+    # Function to handle sign-in button click
+    def doctor_signin():
+        username = username_entry.get()
+        password = password_entry.get()
+        # Check if username and password exist in database
+        conn = sqlite3.connect("hospital.db")
+        c = conn.cursor()
+        c.execute("SELECT * FROM doctors WHERE name=? AND password=?", (username, password))
+        result = c.fetchone()
+        conn.close()
+        if result:
+            messagebox.showinfo("Doctor Sign In", "Sign in successful!")
+        else:
+            messagebox.showerror("Error", "Invalid username or password!")
+        doctor_dialog.destroy()
+    
+    # Sign-in button
+    signin_button = tk.Button(doctor_dialog, text="Sign In", command=doctor_signin)
+    signin_button.grid(row=2, columnspan=2, padx=5, pady=10)
+
+def admin_signin_dialog():
+    # Function to create and display the admin sign-in dialog box
+    admin_dialog = tk.Toplevel(root)
+    admin_dialog.title("Admin Login")
+    admin_dialog.geometry("300x150")
+    
+    # Label and Entry for username
+    tk.Label(admin_dialog, text="Username:").grid(row=0, column=0, padx=5, pady=5)
+    username_entry = tk.Entry(admin_dialog)
+    username_entry.grid(row=0, column=1, padx=5, pady=5)
+    
+    # Label and Entry for password
+    tk.Label(admin_dialog, text="Password:").grid(row=1, column=0, padx=5, pady=5)
+    password_entry = tk.Entry(admin_dialog, show="*")
+    password_entry.grid(row=1, column=1, padx=5, pady=5)
+    
+    # Function to handle sign-in button click
+    def admin_signin():
+        username = username_entry.get()
+        password = password_entry.get()
+        # Add your sign-in logic here
+        if username == "admin" and password == "admin":
+            messagebox.showinfo("Admin Login", "Login successful!")
+        else:
+            messagebox.showerror("Error", "Invalid username or password!")
+        admin_dialog.destroy()
+    
+    # Sign-in button
+    signin_button = tk.Button(admin_dialog, text="Sign In", command=admin_signin)
+    signin_button.grid(row=2, columnspan=2, padx=5, pady=10)
+
+def patient_register_dialog():
+    # Function to create and display the patient registration dialog box
+    patient_register_dialog = tk.Toplevel(root)
+    patient_register_dialog.title("Patient Registration")
+    patient_register_dialog.geometry("400x300")
+    
+    # Labels and Entry for registration details
+    tk.Label(patient_register_dialog, text="Name:").grid(row=0, column=0, padx=5, pady=5)
+    name_entry = tk.Entry(patient_register_dialog)
+    name_entry.grid(row=0, column=1, padx=5, pady=5)
+    
+    tk.Label(patient_register_dialog, text="Age:").grid(row=1, column=0, padx=5, pady=5)
+    age_entry = tk.Entry(patient_register_dialog)
+    age_entry.grid(row=1, column=1, padx=5, pady=5)
+    
+    tk.Label(patient_register_dialog, text="Email:").grid(row=2, column=0, padx=5, pady=5)
+    email_entry = tk.Entry(patient_register_dialog)
+    email_entry.grid(row=2, column=1, padx=5, pady=5)
+    
+    tk.Label(patient_register_dialog, text="Mobile Number:").grid(row=3, column=0, padx=5, pady=5)
+    mobile_entry = tk.Entry(patient_register_dialog)
+    mobile_entry.grid(row=3, column=1, padx=5, pady=5)
+    
+    tk.Label(patient_register_dialog, text="Blood Group:").grid(row=4, column=0, padx=5, pady=5)
+    blood_group_entry = tk.Entry(patient_register_dialog)
+    blood_group_entry.grid(row=4, column=1, padx=5, pady=5)
+    
+    tk.Label(patient_register_dialog, text="Address:").grid(row=5, column=0, padx=5, pady=5)
+    address_entry = tk.Entry(patient_register_dialog)
+    address_entry.grid(row=5, column=1, padx=5, pady=5)
+    
+    tk.Label(patient_register_dialog, text="Password:").grid(row=6, column=0, padx=5, pady=5)
+    password_entry = tk.Entry(patient_register_dialog, show="*")
+    password_entry.grid(row=6, column=1, padx=5, pady=5)
+    
+    # Function to handle register button click
+    def register_patient():
+        name = name_entry.get()
+        age = age_entry.get()
+        email = email_entry.get()
+        mobile = mobile_entry.get()
+        blood_group = blood_group_entry.get()
+        address = address_entry.get()
+        password = password_entry.get()
+        # Add registration data to database
+        conn = sqlite3.connect("hospital.db")
+        c = conn.cursor()
+        c.execute("INSERT INTO patients (name, age, email, mobile, blood_group, address, password) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+                  (name, age, email, mobile, blood_group, address, password))
+        conn.commit()
+        conn.close()
+        messagebox.showinfo("Patient Registration", "Patient registered successfully!")
+        patient_register_dialog.destroy()
+    
+    # Register button
+    register_button = tk.Button(patient_register_dialog, text="Register", command=register_patient)
+    register_button.grid(row=7, columnspan=2, padx=5, pady=10)
+
+def doctor_register_dialog():
+    # Function to create and display the doctor registration dialog box
+    doctor_register_dialog = tk.Toplevel(root)
+    doctor_register_dialog.title("Doctor Registration")
+    doctor_register_dialog.geometry("400x300")
+    
+    # Labels and Entry for registration details
+    tk.Label(doctor_register_dialog, text="Name:").grid(row=0, column=0, padx=5, pady=5)
+    name_entry = tk.Entry(doctor_register_dialog)
+    name_entry.grid(row=0, column=1, padx=5, pady=5)
+    
+    tk.Label(doctor_register_dialog, text="Age:").grid(row=1, column=0, padx=5, pady=5)
+    age_entry = tk.Entry(doctor_register_dialog)
+    age_entry.grid(row=1, column=1, padx=5, pady=5)
+    
+    tk.Label(doctor_register_dialog, text="Email:").grid(row=2, column=0, padx=5, pady=5)
+    email_entry = tk.Entry(doctor_register_dialog)
+    email_entry.grid(row=2, column=1, padx=5, pady=5)
+    
+    tk.Label(doctor_register_dialog, text="Mobile Number:").grid(row=3, column=0, padx=5, pady=5)
+    mobile_entry = tk.Entry(doctor_register_dialog)
+    mobile_entry.grid(row=3, column=1, padx=5, pady=5)
+    
+    tk.Label(doctor_register_dialog, text="Specialization:").grid(row=4, column=0, padx=5, pady=5)
+    specialization_entry = tk.Entry(doctor_register_dialog)
+    specialization_entry.grid(row=4, column=1, padx=5, pady=5)
+    
+    tk.Label(doctor_register_dialog, text="Address:").grid(row=5, column=0, padx=5, pady=5)
+    address_entry = tk.Entry(doctor_register_dialog)
+    address_entry.grid(row=5, column=1, padx=5, pady=5)
+    
+    tk.Label(doctor_register_dialog, text="Password:").grid(row=6, column=0, padx=5, pady=5)
+    password_entry = tk.Entry(doctor_register_dialog, show="*")
+    password_entry.grid(row=6, column=1, padx=5, pady=5)
+    
+    # Function to handle register button click
+    def register_doctor():
+        name = name_entry.get()
+        age = age_entry.get()
+        email = email_entry.get()
+        mobile = mobile_entry.get()
+        specialization = specialization_entry.get()
+        address = address_entry.get()
+        password = password_entry.get()
+        # Add registration data to database
+        conn = sqlite3.connect("hospital.db")
+        c = conn.cursor()
+        c.execute("INSERT INTO doctors (name, age, email, mobile, specialization, address, password) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+                  (name, age, email, mobile, specialization, address, password))
+        conn.commit()
+        conn.close()
+        messagebox.showinfo("Doctor Registration", "Doctor registered successfully!")
+        doctor_register_dialog.destroy()
+    
+    # Register button
+    register_button = tk.Button(doctor_register_dialog, text="Register", command=register_doctor)
+    register_button.grid(row=7, columnspan=2, padx=5, pady=10)
+
+def patient_register():
+    # Function to open patient registration dialog
+    patient_register_dialog()
+
+def doctor_register():
+    # Function to open doctor registration dialog
+    doctor_register_dialog()
+
+# Initialize the database
+initialize_database()
+
+root = tk.Tk()
+root.title("Hospital Management System")
+root.geometry("600x400")
+root.configure(bg="light blue")
+
+# Heading
+heading_label = tk.Label(root, text="Hospital Management System", bg="dark blue", fg="white", font=("Arial", 16, "bold"))
+heading_label.pack(pady=20)
+
+# Frame for login and register options
+frame = tk.Frame(root, bg="light blue")
+frame.pack()
+
+# Buttons for login and register
+patient_login_button = tk.Button(frame, text="Patient Sign In", command=patient_signin_dialog)
+patient_login_button.grid(row=0, column=0, padx=10, pady=5)
+
+doctor_login_button = tk.Button(frame, text="Doctor Sign In", command=doctor_signin_dialog)
+doctor_login_button.grid(row=1, column=0, padx=10, pady=5)
+
+admin_login_button = tk.Button(frame, text="Admin Login", command=admin_signin_dialog)
+admin_login_button.grid(row=2, column=0, padx=10, pady=5)
+
+patient_register_button = tk.Button(frame, text="Patient Register", command=patient_register)
+patient_register_button.grid(row=0, column=1, padx=10, pady=5)
+
+doctor_register_button = tk.Button(frame, text="Doctor Register", command=doctor_register)
+doctor_register_button.grid(row=1, column=1, padx=10, pady=5)
+
+# Vertical scroll bar
+scrollbar = ttk.Scrollbar(root, orient="vertical")
+scrollbar.pack(side="right", fill="y")
+
+root.mainloop()
